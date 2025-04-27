@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.newsdbtask.ui.presentation.home.HomeScreen
 import com.example.newsdbtask.ui.theme.NewsDBTaskTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,10 +23,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             NewsDBTaskTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Text(
-                        text = "Hello World!",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    HomeScreen()
                 }
             }
         }
