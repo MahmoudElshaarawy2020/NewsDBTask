@@ -12,7 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.newsdbtask.ui.theme.NewsDBTaskTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,6 +22,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             NewsDBTaskTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Text(
+                        text = "Hello World!",
+                        modifier = Modifier.padding(innerPadding)
+                    )
                 }
             }
         }

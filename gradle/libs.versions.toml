@@ -1,16 +1,27 @@
 [versions]
-agp = "8.8.0"
-kotlin = "2.0.0"
+agp = "8.6.0"
+kotlin = "1.9.23"
 coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
+ok2curl = "0.7.0"
 lifecycleRuntimeKtx = "2.8.7"
-activityCompose = "1.10.1"
+activityCompose = "1.10.0"
 composeBom = "2024.04.01"
+appcompat = "1.7.0"
+material = "1.12.0"
+navigationCompose = "2.8.6"
+constraintlayout = "2.2.0"
+places = "4.1.0"
+roomRuntimeAndroid = "2.7.0-rc03"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+ok2curl = { group = "com.github.mrmike", name = "ok2curl", version.ref = "ok2curl" }
+hilt = { group = 'com.google.dagger', name = 'hilt-android', version = '2.51.1'}
+androidx-hilt = { group = 'androidx.hilt', name = 'hilt-navigation-compose', version = '1.2.0'}
+hilt-android-compiler = { group = 'com.google.dagger', name = 'hilt-compiler', version = '2.51.1' }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -26,6 +37,8 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 
 [plugins]
+ksp = { id = "com.google.devtools.ksp", version = "2.0.0-1.0.23" }
+dagger-hilt = { id = "com.google.dagger.hilt.android", version = "2.48" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
