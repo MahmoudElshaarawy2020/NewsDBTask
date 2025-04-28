@@ -15,28 +15,33 @@ import com.example.newsdbtask.ui.presentation.home.HomeViewModel
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel    = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val newsState = viewModel.getNewsState.collectAsState()
 
-    Column(modifier = Modifier.fillMaxSize(),
+    Column(
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
-
+        verticalArrangement = Arrangement.Center
+    ) {
         when (val result = newsState.value) {
             is Result.Loading -> {
                 Text(text = "Loading...")
             }
             is Result.Success -> {
                 val news = result.data
-                Text(text = "First News Title: ${news?.articles?.firstOrNull()?.title ?: "No news"}")
+                if (news?.articles.isNullOrEmpty()) {
+                    Text(text = "No news available")
+                } else {
+                    Text(text = "First News Title: ${news?.articles?.firstOrNull()?.title ?: "No title"}")
+                }
             }
             is Result.Error -> {
-                Text(text = "Error: ${result.message}")
+                Text(text = "Error: ${result.message ?: "Unknown Error"}")
             }
-
-            is Result.Idle -> TODO()
+            is Result.Idle -> {
+                Text(text = "Waiting for data...")
+            }
         }
     }
-
 }

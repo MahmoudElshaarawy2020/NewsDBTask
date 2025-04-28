@@ -10,7 +10,7 @@ import javax.inject.Inject
 class GetNewsRepoImpl @Inject constructor(
     private val apiService: ApiService
 ) : GetNewsRepo {
-    override suspend fun getAllNews(query: String): Result<NewsResponse> {
+    override suspend fun getAllNews(query: String): NewsResponse {
         return apiService.getNews(query, API_KEY)
     }
 }

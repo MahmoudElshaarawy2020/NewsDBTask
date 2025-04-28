@@ -22,25 +22,23 @@ class HomeViewModel @Inject constructor(
     val getNewsState: MutableStateFlow<Result<NewsResponse>> get() = _getNewsState
 
     init {
-        // Call getAllNews() automatically when ViewModel is created
         getAllNews()
     }
 
     private fun getAllNews(query: String = "bitcoin") {
         viewModelScope.launch {
             try {
-                val result = getAllNewsUseCase.invoke(query)
-                _getNewsState.value = result
+                val newsResponse = getAllNewsUseCase.invoke(query)
+                _getNewsState.value = Result.Success(newsResponse)
 
-                // Log the result if it is success
-                if (result is Result.Success) {
-                    Log.d("getNewsSuccess", "News Data: ${result.data}")
-                }
+                Log.d("getNewsSuccess", "News Data: ${newsResponse}")
             } catch (e: Exception) {
                 Log.e("getNewsError", "API call failed", e)
                 _getNewsState.value = Result.Error("Unexpected Error: ${e.message}")
             }
         }
     }
+
 }
+
 
