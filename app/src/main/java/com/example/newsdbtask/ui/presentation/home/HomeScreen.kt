@@ -43,10 +43,11 @@ fun HomeScreen(
     Column(modifier = Modifier.fillMaxSize()) {
 
         TopAppBar(
-            title = { Text("News") },
+            title = { Text("News DB") },
             actions = {
                 IconButton(onClick = { isDropdownOpen = !isDropdownOpen }) {
                     Icon(
+                        modifier = Modifier.size(24.dp),
                         painter = painterResource(R.drawable.filter),
                         contentDescription = "Filter"
                     )
