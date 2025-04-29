@@ -3,62 +3,82 @@ package com.example.newsdbtask.ui.presentation.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.example.constants.Result
+import com.example.data.response.ArticlesItem
 import com.example.data.response.NewsResponse
-import com.example.data.response.SourcesResponse
 import com.example.data.response.SourcesResponseList
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
 import com.example.domain.use_case.GetAllNewsUseCase
 import com.example.domain.use_case.GetSourcesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+// HomeViewModel.kt
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getAllNewsUseCase: GetAllNewsUseCase,
-    private val getSourcesUseCase: GetSourcesUseCase
+    private val getSourcesUseCase: GetSourcesUseCase,
 ) : ViewModel() {
 
-    private val _getNewsState = MutableStateFlow<Result<NewsResponse>>(Result.Loading())
-    val getNewsState: MutableStateFlow<Result<NewsResponse>> get() = _getNewsState
+    private val _getPagingNewsState = MutableStateFlow<PagingData<ArticlesItem>>(PagingData.empty())
+    val getPagingNewsState: StateFlow<PagingData<ArticlesItem>> = _getPagingNewsState
 
     private val _getSourcesState = MutableStateFlow<Result<SourcesResponseList>>(Result.Loading())
     val getSourcesState: StateFlow<Result<SourcesResponseList>> get() = _getSourcesState
+
+    private val _currentSource = MutableStateFlow("bbc-news")
+    val currentSource: StateFlow<String> = _currentSource
+
+    private var currentPage = 1
+    private val PAGE_SIZE = 2
 
     init {
         getSources()
     }
 
-     fun getAllNews(query: String) {
+    fun fetchNews(source: String? = null, page: Int? = null) {
         viewModelScope.launch {
             try {
-                val newsResponse = getAllNewsUseCase.invoke(query)
-                _getNewsState.value = Result.Success(newsResponse)
+                // Update source if changed
+                source?.let {
+                    if (it != _currentSource.value) {
+                        _currentSource.value = it
+                        currentPage = 1
+                    }
+                }
 
-                Log.d("getNewsSuccess", "News Data: ${newsResponse}")
+                // Update page if needed
+                page?.let { currentPage = it }
+
+                getAllNewsUseCase(_currentSource.value, currentPage, PAGE_SIZE)
+                    .cachedIn(viewModelScope)
+                    .collect { pagingData ->
+                        _getPagingNewsState.value = pagingData
+                    }
             } catch (e: Exception) {
-                Log.e("getNewsError", "API call failed", e)
-                _getNewsState.value = Result.Error("Unexpected Error: ${e.message}")
+                Log.e("HomeViewModel", "Error fetching news", e)
             }
         }
     }
+
+    fun loadNextPage() {
+        currentPage++
+        fetchNews()
+    }
+
     private fun getSources() {
         viewModelScope.launch {
             try {
-                val sourcesResponse = getSourcesUseCase.invoke()
+                val sourcesResponse = getSourcesUseCase()
                 _getSourcesState.value = Result.Success(sourcesResponse)
-
-                Log.d("getSourcesSuccess", "News sources: ${sourcesResponse}")
             } catch (e: Exception) {
-                Log.e("getSourcesError", "API call failed", e)
                 _getSourcesState.value = Result.Error("Unexpected Error: ${e.message}")
             }
         }
     }
 }
-
-

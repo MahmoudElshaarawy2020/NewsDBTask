@@ -92,6 +92,11 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.7.0")
 
+    //paging
+    implementation("androidx.paging:paging-compose:3.3.6")
+    implementation("androidx.paging:paging-runtime:3.3.6")
+
+
     // Coil (Fixed Dependency Name)
     implementation("io.coil-kt:coil-compose:2.2.2")
 }
