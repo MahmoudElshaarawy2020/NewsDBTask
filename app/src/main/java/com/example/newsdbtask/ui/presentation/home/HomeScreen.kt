@@ -41,7 +41,7 @@ fun HomeScreen(
     var isDropdownOpen by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val selectedSource by remember { mutableStateOf("abc-news") }
-    
+
     val listState = rememberLazyListState()
 
     // Detect when we reach the end of the list
