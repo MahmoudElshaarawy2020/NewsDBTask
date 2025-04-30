@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.LoadState.Loading.endOfPaginationReached
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -34,7 +35,8 @@ import com.example.newsdbtask.ui.presentation.components.NewsCard
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val newsState = viewModel.getPagingNewsState.collectAsLazyPagingItems()
     val sourcesState = viewModel.getSourcesState.collectAsState()

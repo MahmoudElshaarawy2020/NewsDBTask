@@ -9,8 +9,11 @@ import com.example.constants.Result
 import com.example.data.response.ArticlesItem
 import com.example.data.response.NewsResponse
 import com.example.data.response.SourcesResponseList
+import com.example.domain.use_case.AddToFavoritesUseCase
 import com.example.domain.use_case.GetAllNewsUseCase
 import com.example.domain.use_case.GetSourcesUseCase
+import com.example.domain.use_case.IsFavoriteUseCase
+import com.example.domain.use_case.RemoveFromFavoritesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +26,9 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getAllNewsUseCase: GetAllNewsUseCase,
     private val getSourcesUseCase: GetSourcesUseCase,
+    private val addToFavoritesUseCase: AddToFavoritesUseCase,
+    private val removeFromFavoritesUseCase: RemoveFromFavoritesUseCase,
+    private val isFavoriteUseCase: IsFavoriteUseCase
 ) : ViewModel() {
 
     private val _getPagingNewsState = MutableStateFlow<PagingData<ArticlesItem>>(PagingData.empty())
@@ -81,4 +87,14 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
+    fun toggleFavorite(article: ArticlesItem) = viewModelScope.launch {
+        if (isFavoriteUseCase(article.url ?: "")) {
+            removeFromFavoritesUseCase(article)
+        } else {
+            addToFavoritesUseCase(article)
+        }
+    }
+
+    suspend fun isFavorite(url: String): Boolean = isFavoriteUseCase(url)
 }

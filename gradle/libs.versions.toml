@@ -14,10 +14,12 @@ material = "1.12.0"
 navigationCompose = "2.8.6"
 constraintlayout = "2.2.0"
 places = "4.1.0"
+roomCompiler = "2.7.1"
 roomRuntimeAndroid = "2.7.0-rc03"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
 ok2curl = { group = "com.github.mrmike", name = "ok2curl", version.ref = "ok2curl" }
 hilt = { group = 'com.google.dagger', name = 'hilt-android', version = '2.51.1'}
 androidx-hilt = { group = 'androidx.hilt', name = 'hilt-navigation-compose', version = '1.2.0'}
