@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetAllNewsUseCase @Inject constructor(
     private val repository: GetNewsRepo
 ) {
-    suspend operator fun invoke(query: String, pageSize: Int, page: Int): Flow<PagingData<ArticlesItem>> {
-        return repository.getAllNews(query, pageSize, page)
+    suspend operator fun invoke(query: String, pageSize: Int, page: Int): List<ArticlesItem> {
+        return repository.getAllNews(query = query, pageSize = pageSize, page = page)
     }
 }

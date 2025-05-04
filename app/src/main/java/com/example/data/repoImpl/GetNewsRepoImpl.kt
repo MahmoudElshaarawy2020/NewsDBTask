@@ -19,13 +19,13 @@ class GetNewsRepoImpl @Inject constructor(
         query: String,
         pageSize: Int,
         page: Int
-    ): Flow<PagingData<ArticlesItem>> {  // Change to ArticlesItem
-        return Pager(
-            config = PagingConfig(
-                pageSize = pageSize,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = { NewsPagingSource(apiService, query) }
-        ).flow
+    ): List<ArticlesItem> {
+        val response = apiService.getPagingNews(
+            query = query,
+            page = page,
+            pageSize = pageSize,
+            apiKey = API_KEY
+        )
+        return response.articles?.filterNotNull() ?: emptyList()
     }
 }

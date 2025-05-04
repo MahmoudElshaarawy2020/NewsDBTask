@@ -5,10 +5,8 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.example.constants.Result
 import com.example.data.response.ArticlesItem
-import com.example.data.response.NewsResponse
 import com.example.data.response.SourcesResponseList
 import com.example.domain.use_case.AddToFavoritesUseCase
 import com.example.domain.use_case.GetAllNewsUseCase
@@ -16,11 +14,8 @@ import com.example.domain.use_case.GetSourcesUseCase
 import com.example.domain.use_case.IsFavoriteUseCase
 import com.example.domain.use_case.RemoveFromFavoritesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -41,48 +36,67 @@ class HomeViewModel @Inject constructor(
     private val _getPagingNewsState = MutableStateFlow<PagingData<ArticlesItem>>(PagingData.empty())
     val getPagingNewsState: StateFlow<PagingData<ArticlesItem>> = _getPagingNewsState
 
+    private val _newsList = MutableStateFlow<List<ArticlesItem>>(emptyList())
+    val newsList: StateFlow<List<ArticlesItem>> = _newsList
+
     private val _getSourcesState = MutableStateFlow<Result<SourcesResponseList>>(Result.Loading())
     val getSourcesState: StateFlow<Result<SourcesResponseList>> get() = _getSourcesState
 
     private val _currentSource = MutableStateFlow("bbc-news")
     val currentSource: StateFlow<String> = _currentSource
 
-    private var currentPage = 1
-    private val PAGE_SIZE = 2
+    private var _pageSize = 10
+    private var _currentPage = 1
+    private var isLoadingMore = false
+    private var isEndReached = false
 
     init {
         getSources()
+        fetchNews(reset = true)
     }
 
-    fun fetchNews(source: String? = null, page: Int? = null) {
+    fun fetchNews(source: String? = null, reset: Boolean = false) {
         viewModelScope.launch {
             try {
-                // Update source if changed
                 source?.let {
                     if (it != _currentSource.value) {
                         _currentSource.value = it
-                        currentPage = 1
+                        _currentPage = 1
+                        isEndReached = false
+                        _newsList.value = emptyList()
                     }
                 }
 
-                // Update page if needed
-                page?.let { currentPage = it }
+                if (isLoadingMore || isEndReached) return@launch
+                isLoadingMore = true
 
-                getAllNewsUseCase(_currentSource.value, currentPage, PAGE_SIZE)
-                    .cachedIn(viewModelScope)
-                    .collect { pagingData ->
-                        _getPagingNewsState.value = pagingData
-                    }
+                val newArticles = getAllNewsUseCase(_currentSource.value, _pageSize, _currentPage)
+
+                if (reset) {
+                    _newsList.value = newArticles
+                } else {
+                    _newsList.value = _newsList.value + newArticles
+                }
+
+                if (newArticles.size < _pageSize) {
+                    isEndReached = true
+                } else {
+                    _currentPage++
+                }
+
             } catch (e: Exception) {
-                Log.e("HomeViewModel", "Error fetching news", e)
+                Log.e("HomeViewModel", "Error fetching news: ${e.message}")
+            } finally {
+                isLoadingMore = false
             }
         }
     }
 
-    fun loadNextPage() {
-        currentPage++
-        fetchNews()
-    }
+
+//    fun loadNextPage() {
+//        currentPage++
+//        fetchNews()
+//    }
 
     private fun getSources() {
         viewModelScope.launch {

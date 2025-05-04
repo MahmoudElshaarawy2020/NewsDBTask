@@ -1,6 +1,5 @@
 package com.example.newsdbtask.ui.presentation.home
 
-import android.nfc.tech.MifareUltralight.PAGE_SIZE
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -14,10 +13,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -25,9 +22,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.paging.LoadState
-import androidx.paging.LoadState.Loading.endOfPaginationReached
-import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.constants.Result
 import com.example.newsdbtask.R
 import com.example.newsdbtask.ui.presentation.components.NewsCard
@@ -39,11 +33,11 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    val newsState = viewModel.getPagingNewsState.collectAsLazyPagingItems()
+    val newsList by viewModel.newsList.collectAsState()
     val sourcesState = viewModel.getSourcesState.collectAsState()
     var isDropdownOpen by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val selectedSource by remember { mutableStateOf("abc-news") }
+    var selectedSource by remember { mutableStateOf("bbc-news") }
     val isFavorite by remember { mutableStateOf(false) }
 
     val listState = rememberLazyListState()
@@ -60,10 +54,13 @@ fun HomeScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.fetchNews(source = selectedSource, reset = true)
+    }
+
     LaunchedEffect(shouldLoadMore.value) {
-        viewModel.fetchNews(source = selectedSource, page = 1)
         if (shouldLoadMore.value) {
-            viewModel.loadNextPage()
+            viewModel.fetchNews(source = selectedSource, reset = false)
         }
     }
 
@@ -91,6 +88,7 @@ fun HomeScreen(
                                 onClick = {}
                             )
                         }
+
                         is Result.Success -> {
                             val sources = result.data?.sources ?: emptyList()
                             sources.forEach { source ->
@@ -98,7 +96,8 @@ fun HomeScreen(
                                     text = { Text(text = source.name ?: "No name") },
                                     onClick = {
                                         val sourceId = source.id ?: return@DropdownMenuItem
-                                        viewModel.fetchNews(source = sourceId)
+                                        selectedSource = sourceId
+                                        viewModel.fetchNews(source = sourceId, reset = true)
                                         isDropdownOpen = false
                                         Toast.makeText(
                                             context,
@@ -106,69 +105,46 @@ fun HomeScreen(
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     }
+
                                 )
                             }
                         }
+
                         is Result.Error -> {
                             DropdownMenuItem(
                                 text = { Text("Failed to load sources") },
                                 onClick = {}
                             )
                         }
+
                         else -> {}
                     }
                 }
             }
         )
 
-        if (newsState.itemCount == 0 && newsState.loadState.refresh !is LoadState.Loading) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(text = "No news available")
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .background(Color.White)
-                    .fillMaxSize()
-                    .padding(horizontal = 8.dp, vertical = 32.dp),
-                state = listState,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(newsState.itemCount) { index ->
-                    val article = newsState[index]
-                    article?.let {
-                        val isFavorite = viewModel.favoritesMap[it.url] ?: false
+        LazyColumn(
+            modifier = Modifier
+                .background(Color.White)
+                .fillMaxSize()
+                .padding(horizontal = 8.dp, vertical = 32.dp),
+            state = listState,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(newsList) { article ->
+                val isFavorite = viewModel.favoritesMap[article.url] ?: false
 
-                        NewsCard(
-                            isFavorite = isFavorite,
-                            url = it.urlToImage ?: "",
-                            title = it.title ?: "No Title",
-                            date = it.publishedAt ?: "Unknown Date",
-                            onFavoriteClick = {
-                                viewModel.toggleFavorite(it)
-                            }
-                        )
+                NewsCard(
+                    isFavorite = isFavorite,
+                    url = article.urlToImage ?: "",
+                    title = article.title ?: "No Title",
+                    date = article.publishedAt ?: "Unknown Date",
+                    onFavoriteClick = {
+                        viewModel.toggleFavorite(article)
                     }
-                }
-
-                // Show loading indicator at the bottom when loading more
-                if (newsState.loadState.append is LoadState.Loading) {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    }
-                }
+                )
             }
+
         }
     }
 }

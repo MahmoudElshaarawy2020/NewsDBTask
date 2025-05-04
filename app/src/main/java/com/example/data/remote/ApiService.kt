@@ -9,9 +9,9 @@ interface ApiService {
     @GET("everything")
     suspend fun getPagingNews(
         @Query("q") query: String,
-        @Query("apiKey") apiKey: String,
         @Query("page") page: Int,
-        @Query("pageSize") pageSize: Int
+        @Query("pageSize") pageSize: Int,
+        @Query("apiKey") apiKey: String,
         ): NewsResponse
 
     @GET("top-headlines/sources")
