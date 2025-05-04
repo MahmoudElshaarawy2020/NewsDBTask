@@ -6,6 +6,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,15 +29,19 @@ import coil.compose.AsyncImage
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun NewsCard(url: String, title: String, date: String) {
+fun NewsCard(
+    url: String,
+    title: String,
+    date: String,
+    isFavorite: Boolean = false,
+    onFavoriteClick: () -> Unit = {}
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp) // Outer padding
-            .aspectRatio(18f / 12f) // Keep nice card proportion
-            .clip(RoundedCornerShape(16.dp)) // Rounded corners
-            .background(Color.LightGray) // Background behind image
-            .shadow(8.dp, RoundedCornerShape(16.dp)) // Add soft shadow
+            .padding(8.dp)
+            .aspectRatio(18f / 12f)
+            .clip(RoundedCornerShape(16.dp))
     ) {
         AsyncImage(
             model = url,
@@ -40,7 +50,23 @@ fun NewsCard(url: String, title: String, date: String) {
             contentScale = ContentScale.Crop
         )
 
-        // Darker gradient overlay (looks better)
+        IconButton(
+            onClick = onFavoriteClick,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(8.dp)
+                .background(Color.Black.copy(alpha = 0.5f), RoundedCornerShape(8.dp))
+                .size(36.dp)
+        ) {
+            Icon(
+                imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                contentDescription = "Favorite",
+                tint = if (isFavorite) Color.Red else Color.White,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+
+        // Bottom gradient overlay
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -77,14 +103,15 @@ fun NewsCard(url: String, title: String, date: String) {
     }
 }
 
-
 @Preview
 @Composable
-private fun NewCardPrev() {
+private fun NewsCardPreview() {
     NewsCard(
-        "https://www.google.com/imgres?q=images&imgurl=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F414612%2Fpexels-photo-414612.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-souvenirpixels-414612.jpg%26fm%3Djpg&imgrefurl=https%3A%2F%2Fwww.pexels.com%2Fsearch%2Fnatural%2F&docid=dwm0OYbiSD8M7M&tbnid=oXTudgfT3pqXSM&vet=12ahUKEwj98PvEj_qMAxVPK_sDHQ9oLvgQM3oECBkQAA..i&w=5306&h=3770&hcb=2&itg=1&ved=2ahUKEwj98PvEj_qMAxVPK_sDHQ9oLvgQM3oECBkQAA",
-        "Title",
-        "Date"
+        url = "https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg",
+        title = "This is a sample news title that might be long",
+        date = "May 15, 2023",
+        isFavorite = true,
+        onFavoriteClick = {}
     )
 }
 

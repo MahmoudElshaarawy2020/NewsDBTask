@@ -14,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -43,6 +44,7 @@ fun HomeScreen(
     var isDropdownOpen by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val selectedSource by remember { mutableStateOf("abc-news") }
+    val isFavorite by remember { mutableStateOf(false) }
 
     val listState = rememberLazyListState()
 
@@ -139,10 +141,16 @@ fun HomeScreen(
                 items(newsState.itemCount) { index ->
                     val article = newsState[index]
                     article?.let {
+                        val isFavorite = viewModel.favoritesMap[it.url] ?: false
+
                         NewsCard(
+                            isFavorite = isFavorite,
                             url = it.urlToImage ?: "",
                             title = it.title ?: "No Title",
                             date = it.publishedAt ?: "Unknown Date",
+                            onFavoriteClick = {
+                                viewModel.toggleFavorite(it)
+                            }
                         )
                     }
                 }

@@ -24,7 +24,7 @@ class NewsPagingSource @Inject constructor(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ArticlesItem> {
         val position = params.key ?: 1
-        val pageSize = params.loadSize  // Dynamically use the pageSize passed to the load
+        val pageSize = 10 // Dynamically use the pageSize passed to the load
 
         return try {
             // Use the pageSize in the API call

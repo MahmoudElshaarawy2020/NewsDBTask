@@ -1,6 +1,7 @@
 package com.example.newsdbtask.ui.presentation.home
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -15,8 +16,10 @@ import com.example.domain.use_case.GetSourcesUseCase
 import com.example.domain.use_case.IsFavoriteUseCase
 import com.example.domain.use_case.RemoveFromFavoritesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,6 +33,10 @@ class HomeViewModel @Inject constructor(
     private val removeFromFavoritesUseCase: RemoveFromFavoritesUseCase,
     private val isFavoriteUseCase: IsFavoriteUseCase
 ) : ViewModel() {
+
+
+    private val _favoritesMap = mutableStateMapOf<String, Boolean>()
+    val favoritesMap: Map<String, Boolean> get() = _favoritesMap
 
     private val _getPagingNewsState = MutableStateFlow<PagingData<ArticlesItem>>(PagingData.empty())
     val getPagingNewsState: StateFlow<PagingData<ArticlesItem>> = _getPagingNewsState
@@ -89,12 +96,17 @@ class HomeViewModel @Inject constructor(
     }
 
     fun toggleFavorite(article: ArticlesItem) = viewModelScope.launch {
-        if (isFavoriteUseCase(article.url ?: "")) {
-            removeFromFavoritesUseCase(article)
-        } else {
-            addToFavoritesUseCase(article)
+        val url = article.url ?: return@launch
+        val current = _favoritesMap[url] ?: isFavoriteUseCase(url)
+        if (current) removeFromFavoritesUseCase(article) else addToFavoritesUseCase(article)
+        _favoritesMap[url] = !current
+    }
+
+    suspend fun isFavorite(url: String): Boolean {
+        return _favoritesMap[url] ?: isFavoriteUseCase(url).also {
+            _favoritesMap[url] = it
         }
     }
 
-    suspend fun isFavorite(url: String): Boolean = isFavoriteUseCase(url)
+
 }
