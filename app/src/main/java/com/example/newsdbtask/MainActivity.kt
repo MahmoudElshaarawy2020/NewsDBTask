@@ -11,7 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 import com.example.newsdbtask.navigation.AppNavigation
+import com.example.newsdbtask.navigation.Screen
 import com.example.newsdbtask.ui.presentation.home.HomeScreen
 import com.example.newsdbtask.ui.theme.NewsDBTaskTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,8 +25,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NewsDBTaskTheme {
+                val navController = rememberNavController()
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AppNavigation()
+                    AppNavigation(navController = navController, startDestination = Screen.Home.route)
                 }
             }
         }

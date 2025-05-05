@@ -42,7 +42,6 @@ fun HomeScreen(
 
     val listState = rememberLazyListState()
 
-    // Detect when we reach the end of the list
     val shouldLoadMore = remember {
         derivedStateOf {
             val layoutInfo = listState.layoutInfo
@@ -127,7 +126,7 @@ fun HomeScreen(
             modifier = Modifier
                 .background(Color.White)
                 .fillMaxSize()
-                .padding(horizontal = 8.dp, vertical = 32.dp),
+                .padding(horizontal = 8.dp, vertical = 8.dp),
             state = listState,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {

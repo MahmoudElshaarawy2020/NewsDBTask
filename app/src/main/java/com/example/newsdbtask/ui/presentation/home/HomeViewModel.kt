@@ -7,9 +7,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.example.constants.Result
 import com.example.data.response.ArticlesItem
+import com.example.data.response.Source
 import com.example.data.response.SourcesResponseList
 import com.example.domain.use_case.AddToFavoritesUseCase
 import com.example.domain.use_case.GetAllNewsUseCase
+import com.example.domain.use_case.GetFavoritesUseCase
 import com.example.domain.use_case.GetSourcesUseCase
 import com.example.domain.use_case.IsFavoriteUseCase
 import com.example.domain.use_case.RemoveFromFavoritesUseCase
@@ -26,12 +28,16 @@ class HomeViewModel @Inject constructor(
     private val getSourcesUseCase: GetSourcesUseCase,
     private val addToFavoritesUseCase: AddToFavoritesUseCase,
     private val removeFromFavoritesUseCase: RemoveFromFavoritesUseCase,
+    private val getFavoritesUseCase: GetFavoritesUseCase,
     private val isFavoriteUseCase: IsFavoriteUseCase
 ) : ViewModel() {
 
 
     private val _favoritesMap = mutableStateMapOf<String, Boolean>()
     val favoritesMap: Map<String, Boolean> get() = _favoritesMap
+
+    private val _favorites = MutableStateFlow<List<ArticlesItem>>(emptyList())
+    val favorites: StateFlow<List<ArticlesItem>> = _favorites
 
     private val _getPagingNewsState = MutableStateFlow<PagingData<ArticlesItem>>(PagingData.empty())
     val getPagingNewsState: StateFlow<PagingData<ArticlesItem>> = _getPagingNewsState
@@ -53,6 +59,7 @@ class HomeViewModel @Inject constructor(
     init {
         getSources()
         fetchNews(reset = true)
+        loadFavorites()
     }
 
     fun fetchNews(source: String? = null, reset: Boolean = false) {
@@ -112,9 +119,43 @@ class HomeViewModel @Inject constructor(
     fun toggleFavorite(article: ArticlesItem) = viewModelScope.launch {
         val url = article.url ?: return@launch
         val current = _favoritesMap[url] ?: isFavoriteUseCase(url)
-        if (current) removeFromFavoritesUseCase(article) else addToFavoritesUseCase(article)
+
+        if (current) {
+            removeFromFavoritesUseCase(article)
+            _favorites.value = _favorites.value.filterNot { it.url == url }
+        } else {
+            addToFavoritesUseCase(article)
+            _favorites.value += article
+        }
+
         _favoritesMap[url] = !current
     }
+
+    private fun loadFavorites() {
+        viewModelScope.launch {
+            try {
+                getFavoritesUseCase().collect { favorites ->
+                    _favorites.value = favorites.map { favorite ->
+                        ArticlesItem(
+                            source = Source(name = favorite.sourceName),
+                            title = favorite.title,
+                            description = favorite.description,
+                            url = favorite.url,
+                            urlToImage = favorite.urlToImage,
+                            publishedAt = favorite.publishedAt
+                        )
+                    }
+                    // Update favorites map
+                    favorites.forEach {
+                        _favoritesMap[it.url] = true
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Error loading favorites", e)
+            }
+        }
+    }
+
 
     suspend fun isFavorite(url: String): Boolean {
         return _favoritesMap[url] ?: isFavoriteUseCase(url).also {
