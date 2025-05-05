@@ -28,7 +28,7 @@ fun BottomNavigationBar(
             .fillMaxWidth()
             .padding(bottom = 10.dp)
             .height(74.dp),
-        containerColor = Color.Gray
+        containerColor = Color.White
     ) {
         items.forEachIndexed { index, item ->
             NavigationBarItem(

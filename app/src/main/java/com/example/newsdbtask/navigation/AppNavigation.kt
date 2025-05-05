@@ -33,7 +33,7 @@ fun AppNavigation(
             icon = R.drawable.home_ic
         ),
        BottomNavItem(
-            label = "Profile",
+            label = "Bookmark",
             icon = R.drawable.wishlist_ic
         )
    )
