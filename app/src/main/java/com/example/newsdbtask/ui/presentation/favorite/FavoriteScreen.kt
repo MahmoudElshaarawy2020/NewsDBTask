@@ -32,7 +32,8 @@ import com.example.newsdbtask.ui.presentation.home.HomeViewModel
 @Composable
 fun FavoriteScreen(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    isNavigated: Boolean = false
 ) {
     val favorites by viewModel.favorites.collectAsState()
 

@@ -32,7 +32,6 @@ class HomeViewModel @Inject constructor(
     private val isFavoriteUseCase: IsFavoriteUseCase
 ) : ViewModel() {
 
-
     private val _favoritesMap = mutableStateMapOf<String, Boolean>()
     val favoritesMap: Map<String, Boolean> get() = _favoritesMap
 
@@ -56,10 +55,26 @@ class HomeViewModel @Inject constructor(
     private var isLoadingMore = false
     private var isEndReached = false
 
+    private val _isNavigated = MutableStateFlow(false)
+    val isNavigated: StateFlow<Boolean> = _isNavigated
+
+    private var _shouldSkipNextPageIncrement = false
+    private var _lastNavigationTime = 0L
+    private val navigationDebounceTime = 500L
+
     init {
         getSources()
         fetchNews(reset = true)
         loadFavorites()
+    }
+
+    fun prepareForNavigation() {
+        _shouldSkipNextPageIncrement = true
+        _lastNavigationTime = System.currentTimeMillis()
+    }
+
+    fun setIsNavigated(navigated: Boolean) {
+        _isNavigated.value = navigated
     }
 
     fun fetchNews(source: String? = null, reset: Boolean = false) {
@@ -77,7 +92,13 @@ class HomeViewModel @Inject constructor(
                 if (isLoadingMore || isEndReached) return@launch
                 isLoadingMore = true
 
-                val newArticles = getAllNewsUseCase(_currentSource.value, _pageSize, _currentPage)
+                val now = System.currentTimeMillis()
+                val shouldSkip =
+                    _shouldSkipNextPageIncrement && (now - _lastNavigationTime) < navigationDebounceTime
+
+                val pageToLoad = _currentPage
+
+                val newArticles = getAllNewsUseCase(_currentSource.value, _pageSize, pageToLoad)
 
                 if (reset) {
                     _newsList.value = newArticles
@@ -87,9 +108,12 @@ class HomeViewModel @Inject constructor(
 
                 if (newArticles.size < _pageSize) {
                     isEndReached = true
-                } else {
+                } else if (!shouldSkip) {
                     _currentPage++
                 }
+
+                // Reset skip flag only after page decision
+                _shouldSkipNextPageIncrement = false
 
             } catch (e: Exception) {
                 Log.e("HomeViewModel", "Error fetching news: ${e.message}")
@@ -98,7 +122,6 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-
 
 //    fun loadNextPage() {
 //        currentPage++

@@ -31,7 +31,7 @@ import com.example.newsdbtask.ui.presentation.components.NewsCard
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
-    navController: NavController
+    navController: NavController,
 ) {
     val newsList by viewModel.newsList.collectAsState()
     val sourcesState = viewModel.getSourcesState.collectAsState()
@@ -39,8 +39,11 @@ fun HomeScreen(
     val context = LocalContext.current
     var selectedSource by remember { mutableStateOf("bbc-news") }
     val isFavorite by remember { mutableStateOf(false) }
-
     val listState = rememberLazyListState()
+    var savedFirstVisibleItemIndex by remember { mutableStateOf(0) }
+    var savedFirstVisibleItemScrollOffset by remember { mutableStateOf(0) }
+    val isNavigated by viewModel.isNavigated.collectAsState()
+
 
     val shouldLoadMore = remember {
         derivedStateOf {
@@ -55,6 +58,7 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         viewModel.fetchNews(source = selectedSource, reset = true)
+        viewModel.setIsNavigated(false)
     }
 
     LaunchedEffect(shouldLoadMore.value) {
@@ -62,6 +66,13 @@ fun HomeScreen(
             viewModel.fetchNews(source = selectedSource, reset = false)
         }
     }
+
+    //to reset the flag when navigating to another screen
+//    LaunchedEffect(isNavigated) {
+//        if (isNavigated) {
+//            viewModel.setIsNavigated(false)
+//        }
+//    }
 
 
     Column(modifier = Modifier.fillMaxSize()) {

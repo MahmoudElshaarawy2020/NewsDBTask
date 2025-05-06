@@ -14,21 +14,4 @@ import com.example.data.local.model.FavoriteArticle
 )
 abstract class NewsDatabase : RoomDatabase() {
     abstract fun articleDao(): ArticleDao
-
-    companion object {
-        @Volatile
-        private var INSTANCE: NewsDatabase? = null
-
-        fun getDatabase(context: Context): NewsDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    NewsDatabase::class.java,
-                    "news_database"
-                ).build()
-                INSTANCE = instance
-                instance
-            }
-        }
-    }
 }
