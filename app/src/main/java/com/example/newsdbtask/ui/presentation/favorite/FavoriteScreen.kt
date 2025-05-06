@@ -16,15 +16,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.newsdbtask.R
 import com.example.newsdbtask.ui.presentation.components.NewsCard
 import com.example.newsdbtask.ui.presentation.home.HomeViewModel
 
@@ -32,7 +35,7 @@ import com.example.newsdbtask.ui.presentation.home.HomeViewModel
 @Composable
 fun FavoriteScreen(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = hiltViewModel(),
+    viewModel: FavoritesViewModel = hiltViewModel(),
     isNavigated: Boolean = false
 ) {
     val favorites by viewModel.favorites.collectAsState()
@@ -40,10 +43,16 @@ fun FavoriteScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(color = colorResource(R.color.light_yellow))
     ) {
         TopAppBar(
-            title = { Text("Favorite articles DB") },
+            title = { Text(
+                "Bookmarks",
+                color = colorResource(R.color.light_yellow)
+            ) },
+            colors = TopAppBarDefaults.smallTopAppBarColors(
+                containerColor = colorResource(R.color.light_purple)
+            )
         )
 
         when {
@@ -55,8 +64,8 @@ fun FavoriteScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "No favorites yet",
-                        color = Color.Black
+                        text = "No Bookmarks yet",
+                        color = Color.Gray
                     )
 
                 }
@@ -66,9 +75,9 @@ fun FavoriteScreen(
 
                 LazyColumn(
                     modifier = Modifier
-                        .background(Color.White)
+                        .background(color = colorResource(R.color.light_yellow))
                         .fillMaxSize()
-                        .padding(horizontal = 8.dp, vertical = 32.dp),
+                        .padding(horizontal = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
 

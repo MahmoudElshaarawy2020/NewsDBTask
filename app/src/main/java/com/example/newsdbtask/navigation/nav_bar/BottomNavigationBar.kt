@@ -26,9 +26,8 @@ fun BottomNavigationBar(
     NavigationBar(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 10.dp)
             .height(74.dp),
-        containerColor = Color.White
+        containerColor = colorResource(R.color.light_green2)
     ) {
         items.forEachIndexed { index, item ->
             NavigationBarItem(
@@ -39,16 +38,14 @@ fun BottomNavigationBar(
                         painter = painterResource(id = item.icon),
                         contentDescription = item.label,
                         modifier = Modifier.size(18.dp),
-                        tint = if (selectedItem == index) colorResource(id = R.color.second_blue) else colorResource(
-                            id = R.color.black
-                        )
+                        tint = if (selectedItem == index) colorResource(id = R.color.light_purple) else Color.Gray
                     )
                 },
                 label = {
                     Text(
                         text = item.label,
                         fontSize = 12.sp,
-                        color = if (selectedItem == index) colorResource(id = R.color.second_blue) else Color.Black
+                        color = if (selectedItem == index) colorResource(id = R.color.light_purple) else Color.Gray
                     )
                 }
             )
