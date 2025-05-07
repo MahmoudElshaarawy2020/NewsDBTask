@@ -66,7 +66,7 @@ fun NewsCard(
             )
         }
 
-        // Bottom gradient overlay
+        //overlay
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -103,15 +103,4 @@ fun NewsCard(
     }
 }
 
-@Preview
-@Composable
-private fun NewsCardPreview() {
-    NewsCard(
-        url = "https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg",
-        title = "This is a sample news title that might be long",
-        date = "May 15, 2023",
-        isFavorite = true,
-        onFavoriteClick = {}
-    )
-}
 

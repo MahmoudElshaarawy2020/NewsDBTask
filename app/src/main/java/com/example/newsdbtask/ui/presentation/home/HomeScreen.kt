@@ -32,13 +32,12 @@ import com.example.newsdbtask.R
 import com.example.newsdbtask.ui.presentation.components.NewsCard
 import com.example.newsdbtask.ui.presentation.favorite.FavoritesViewModel
 
-// HomeScreen.kt
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel = hiltViewModel(),
     favoritesViewModel: FavoritesViewModel = hiltViewModel(),
-    navController: NavController,
+    navController: NavController
 ) {
     val newsState by homeViewModel.newsState.collectAsState()
     val sourcesState = homeViewModel.getSourcesState.collectAsState()

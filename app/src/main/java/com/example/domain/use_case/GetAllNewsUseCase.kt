@@ -1,9 +1,7 @@
 package com.example.domain.use_case
 
-import androidx.paging.PagingData
 import com.example.data.response.ArticlesItem
 import com.example.domain.repo.GetNewsRepo
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetAllNewsUseCase @Inject constructor(

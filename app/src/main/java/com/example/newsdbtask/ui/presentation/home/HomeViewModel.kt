@@ -35,7 +35,6 @@ class HomeViewModel @Inject constructor(
     val getSourcesState: StateFlow<Result<SourcesResponseList>> get() = _getSourcesState
 
     private val _currentSource = MutableStateFlow("bbc-news")
-    val currentSource: StateFlow<String> = _currentSource
 
     private var _currentPage = 1
     private var _pageSize = 10

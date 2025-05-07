@@ -11,9 +11,6 @@ import com.example.data.repoImpl.GetSourceRepoImpl
 import com.example.domain.repo.ArticleRepository
 import com.example.domain.repo.GetNewsRepo
 import com.example.domain.repo.GetSourcesRepo
-import com.example.domain.use_case.AddToFavoritesUseCase
-import com.example.domain.use_case.IsFavoriteUseCase
-import com.example.domain.use_case.RemoveFromFavoritesUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

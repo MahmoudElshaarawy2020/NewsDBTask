@@ -6,7 +6,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -16,14 +15,11 @@ import com.example.newsdbtask.navigation.nav_bar.BottomNavItem
 import com.example.newsdbtask.navigation.nav_bar.BottomNavigationBar
 import com.example.newsdbtask.ui.presentation.favorite.FavoriteScreen
 import com.example.newsdbtask.ui.presentation.home.HomeScreen
-import com.example.newsdbtask.ui.presentation.home.HomeViewModel
 
 @Composable
 fun AppNavigation(
-    modifier: Modifier = Modifier,
     navController: NavHostController,
     startDestination: String,
-    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
@@ -84,7 +80,7 @@ fun AppNavigation(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            composable("home_screen") {
+            composable(Screen.Home.route) {
                 HomeScreen(
                     navController = navController,
                 )

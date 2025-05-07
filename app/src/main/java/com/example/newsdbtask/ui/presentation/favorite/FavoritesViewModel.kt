@@ -72,10 +72,4 @@ class FavoritesViewModel @Inject constructor(
             }
         }
     }
-
-    suspend fun isFavorite(url: String): Boolean {
-        return _favoritesMap[url] ?: isFavoriteUseCase(url).also {
-            _favoritesMap[url] = it
-        }
-    }
 }
