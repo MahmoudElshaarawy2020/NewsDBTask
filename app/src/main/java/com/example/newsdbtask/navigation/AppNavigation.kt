@@ -1,6 +1,7 @@
 package com.example.newsdbtask.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -44,7 +45,9 @@ fun AppNavigation(
     }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .navigationBarsPadding(),
         bottomBar = {
             if (currentRoute?.contains(Screen.Home.route) == true || currentRoute?.contains(Screen.Favorite.route) == true) {
                 BottomNavigationBar(

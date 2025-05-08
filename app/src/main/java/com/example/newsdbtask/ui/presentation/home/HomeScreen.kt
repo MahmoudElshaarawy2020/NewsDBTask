@@ -31,6 +31,7 @@ import com.example.data.response.ArticlesItem
 import com.example.newsdbtask.R
 import com.example.newsdbtask.ui.presentation.components.NewsCard
 import com.example.newsdbtask.ui.presentation.favorite.FavoritesViewModel
+import com.example.newsdbtask.ui.presentation.shimmer_loader.PlaceholderNewsCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,6 +91,7 @@ fun HomeScreen(
                                 onClick = {}
                             )
                         }
+
                         is Result.Success -> {
                             val sources = result.data?.sources ?: emptyList()
                             sources.forEach { source ->
@@ -110,34 +112,39 @@ fun HomeScreen(
                                 )
                             }
                         }
+
                         is Result.Error -> {
                             DropdownMenuItem(
                                 text = { Text("Failed to load sources") },
                                 onClick = {}
                             )
                         }
+
                         else -> {}
                     }
                 }
             }
         )
 
-        Box(modifier = Modifier
-            .background(color = colorResource(R.color.light_yellow))
-            .fillMaxSize()
+        Box(
+            modifier = Modifier
+                .background(color = colorResource(R.color.light_yellow))
+                .fillMaxSize()
         ) {
             when (newsState) {
                 is Result.Loading -> {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        CircularProgressIndicator(color = colorResource(R.color.light_purple))
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text("Loading news...", color = Color.Gray)
+                        items(5) {
+                            PlaceholderNewsCard()
+                        }
                     }
                 }
+
                 is Result.Error -> {
                     val error = (newsState as Result.Error<List<ArticlesItem>>).message
                     Column(
@@ -160,9 +167,11 @@ fun HomeScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
+
                 is Result.Success -> {
 
-                    val newsList = (newsState as Result.Success<List<ArticlesItem>>).data ?: emptyList()
+                    val newsList =
+                        (newsState as Result.Success<List<ArticlesItem>>).data ?: emptyList()
 
                     if (newsList.isEmpty()) {
                         Column(
@@ -192,7 +201,8 @@ fun HomeScreen(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             items(newsList) { article ->
-                                val isFavorite = favoritesViewModel.favoritesMap[article.url] ?: false
+                                val isFavorite =
+                                    favoritesViewModel.favoritesMap[article.url] ?: false
                                 NewsCard(
                                     isFavorite = isFavorite,
                                     url = article.urlToImage ?: "",
@@ -208,5 +218,5 @@ fun HomeScreen(
                 is Result.Idle -> TODO()
             }
         }
-}
     }
+}

@@ -25,7 +25,7 @@ fun BottomNavigationBar(
     NavigationBar(
         modifier = Modifier
             .fillMaxWidth()
-            .height(74.dp),
+            .height(60.dp),
         containerColor = colorResource(R.color.light_green2)
     ) {
         items.forEachIndexed { index, item ->
