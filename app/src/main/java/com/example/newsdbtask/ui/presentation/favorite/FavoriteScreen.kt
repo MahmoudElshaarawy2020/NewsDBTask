@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.newsdbtask.R
@@ -38,12 +37,14 @@ fun FavoriteScreen(
             .background(color = colorResource(R.color.light_yellow))
     ) {
         TopAppBar(
-            title = { Text(
-                "Bookmarks",
-                color = colorResource(R.color.light_yellow)
-            ) },
-            colors = TopAppBarDefaults.smallTopAppBarColors(
-                containerColor = colorResource(R.color.light_purple)
+            title = {
+                Text(
+                    "Bookmarks",
+                    color = colorResource(id = R.color.light_yellow)
+                )
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = colorResource(id = R.color.light_purple)
             )
         )
 

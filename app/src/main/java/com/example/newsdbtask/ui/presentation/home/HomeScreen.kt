@@ -69,7 +69,7 @@ fun HomeScreen(
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
             title = { Text("Online News", color = colorResource(R.color.light_yellow)) },
-            colors = TopAppBarDefaults.smallTopAppBarColors(
+            colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = colorResource(R.color.light_purple)
             ),
             actions = {

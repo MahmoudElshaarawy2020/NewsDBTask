@@ -52,7 +52,7 @@ fun AppNavigation(
             if (currentRoute?.contains(Screen.Home.route) == true || currentRoute?.contains(Screen.Favorite.route) == true) {
                 BottomNavigationBar(
                     items = bottomNavItems,
-                    selectedItem = selectedItemIndex,
+                    selectedIndex = selectedItemIndex,
                     onItemSelected = { index ->
                         when (index) {
                             0 -> {
@@ -73,6 +73,7 @@ fun AppNavigation(
                         }
                     }
                 )
+
             }
         },
         containerColor = MaterialTheme.colorScheme.background
