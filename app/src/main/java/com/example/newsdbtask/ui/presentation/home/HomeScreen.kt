@@ -31,7 +31,7 @@ import com.example.data.response.ArticlesItem
 import com.example.newsdbtask.R
 import com.example.newsdbtask.ui.presentation.components.NewsCard
 import com.example.newsdbtask.ui.presentation.favorite.FavoritesViewModel
-import com.example.newsdbtask.ui.presentation.shimmer_loader.PlaceholderNewsCard
+import com.example.newsdbtask.ui.presentation.components.shimmer_loader.PlaceholderNewsCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

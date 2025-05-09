@@ -1,4 +1,4 @@
-package com.example.newsdbtask.ui.presentation.shimmer_loader
+package com.example.newsdbtask.ui.presentation.components.shimmer_loader
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background

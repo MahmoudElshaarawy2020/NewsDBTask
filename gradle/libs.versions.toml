@@ -5,6 +5,7 @@ coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
+#vico = "2.1.2"
 ok2curl = "0.7.0"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.0"
@@ -20,6 +21,12 @@ roomRuntimeAndroid = "2.7.0-rc03"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
+#vico-compose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "vico" }
+#vico-compose-m2 = { group = "com.patrykandpatrick.vico", name = "compose-m2", version.ref = "vico" }
+#vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
+#vico-views = { group = "com.patrykandpatrick.vico", name = "views", version.ref = "vico" }
+
+
 ok2curl = { group = "com.github.mrmike", name = "ok2curl", version.ref = "ok2curl" }
 hilt = { group = 'com.google.dagger', name = 'hilt-android', version = '2.51.1'}
 androidx-hilt = { group = 'androidx.hilt', name = 'hilt-navigation-compose', version = '1.2.0'}

@@ -64,6 +64,15 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+
+//    //vice charts
+//    implementation(libs.vico.compose)
+//    implementation(libs.vico.compose.m2)
+//    implementation(libs.vico.compose.m3)
+//    implementation(libs.vico.views)
+
 
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
@@ -109,6 +118,4 @@ dependencies {
 
     // Compose BOM
     implementation(platform("androidx.compose:compose-bom:2025.05.00"))
-
-
 }

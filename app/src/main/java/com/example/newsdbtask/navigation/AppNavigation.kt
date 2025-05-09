@@ -14,6 +14,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.newsdbtask.R
 import com.example.newsdbtask.navigation.nav_bar.BottomNavItem
 import com.example.newsdbtask.navigation.nav_bar.BottomNavigationBar
+import com.example.newsdbtask.ui.presentation.chart.ChartScreen
 import com.example.newsdbtask.ui.presentation.favorite.FavoriteScreen
 import com.example.newsdbtask.ui.presentation.home.HomeScreen
 
@@ -35,12 +36,17 @@ fun AppNavigation(
         BottomNavItem(
             label = "Bookmark",
             icon = R.drawable.wishlist_ic
+        ),
+        BottomNavItem(
+            label = "Chart",
+            icon = R.drawable.chart_ic
         )
     )
 
     val selectedItemIndex = when {
         currentRoute?.contains(Screen.Home.route) == true -> 0
         currentRoute?.contains(Screen.Favorite.route) == true -> 1
+        currentRoute?.contains(Screen.Chart.route) == true -> 2
         else -> -1
     }
 
@@ -49,7 +55,7 @@ fun AppNavigation(
             .fillMaxSize()
             .navigationBarsPadding(),
         bottomBar = {
-            if (currentRoute?.contains(Screen.Home.route) == true || currentRoute?.contains(Screen.Favorite.route) == true) {
+            if (currentRoute?.contains(Screen.Home.route) == true || currentRoute?.contains(Screen.Favorite.route) == true || currentRoute?.contains(Screen.Chart.route) == true) {
                 BottomNavigationBar(
                     items = bottomNavItems,
                     selectedIndex = selectedItemIndex,
@@ -65,6 +71,14 @@ fun AppNavigation(
 
                             1 -> {
                                 navController.navigate(Screen.Favorite.route) {
+                                    popUpTo(Screen.Home.route) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+
+                            2 -> {
+                                navController.navigate(Screen.Chart.route) {
                                     popUpTo(Screen.Home.route) { saveState = true }
                                     launchSingleTop = true
                                     restoreState = true
@@ -91,6 +105,14 @@ fun AppNavigation(
             }
             composable(Screen.Favorite.route) {
                 FavoriteScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = innerPadding.calculateBottomPadding())
+                )
+            }
+
+            composable(Screen.Chart.route) {
+                ChartScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(bottom = innerPadding.calculateBottomPadding())
