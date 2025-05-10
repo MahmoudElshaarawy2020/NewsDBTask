@@ -46,6 +46,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.graphics.shapes.android)
     val room_version = "2.7.1"
 
     implementation ("androidx.core:core-ktx:1.12.0")

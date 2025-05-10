@@ -38,6 +38,7 @@ import com.example.newsdbtask.ui.presentation.components.shimmer_loader.Placehol
 fun HomeScreen(
     homeViewModel: HomeViewModel = hiltViewModel(),
     favoritesViewModel: FavoritesViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier,
     navController: NavController
 ) {
     val newsState by homeViewModel.newsState.collectAsState()

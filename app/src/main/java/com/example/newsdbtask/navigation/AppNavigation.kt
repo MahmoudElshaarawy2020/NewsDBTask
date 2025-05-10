@@ -107,7 +107,6 @@ fun AppNavigation(
                 FavoriteScreen(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(bottom = innerPadding.calculateBottomPadding())
                 )
             }
 
@@ -115,7 +114,6 @@ fun AppNavigation(
                 ChartScreen(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(bottom = innerPadding.calculateBottomPadding())
                 )
             }
         }

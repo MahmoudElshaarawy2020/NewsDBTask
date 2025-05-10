@@ -10,21 +10,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -32,13 +27,16 @@ import androidx.compose.ui.zIndex
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.toArgb
 import com.example.newsdbtask.R
+import kotlin.math.cos
+import kotlin.math.hypot
+import kotlin.math.sin
 
 @Composable
 fun BottomNavigationBar(
@@ -54,23 +52,21 @@ fun BottomNavigationBar(
         (itemWidth * index) + (itemWidth - indicatorWidth) / 2
     }
 
+    val LightGreen2 = Color(0xFFEEF1DA)
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp)
+            .height(60.dp)
             .background(Color.Transparent)
     ) {
-        Canvas(modifier = Modifier.fillMaxSize().background(Color.Transparent)) {
-            val width = size.width
-            val height = size.height
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val cornerRadius = 20.dp.toPx()
 
-            // Draw the main white background
-            drawRect(
+            drawRoundRect(
                 color = Color.White,
                 topLeft = Offset(0f, 0f),
-                size = Size(width, height),
-                style = Fill,
-                blendMode = BlendMode.SrcAtop
+                size = Size(size.width, size.height),
+                cornerRadius = CornerRadius(cornerRadius, cornerRadius)
             )
         }
 
@@ -82,7 +78,6 @@ fun BottomNavigationBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             items.forEachIndexed { index, item ->
-                val isSelected = selectedIndex == index
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier.size(60.dp)
@@ -106,16 +101,33 @@ fun BottomNavigationBar(
 
         Box(
             modifier = Modifier
-                .offset(x = indicatorOffsetX, y = (-16).dp)
-                .size(50.dp)
-                .background(Color.Transparent, CircleShape)
-                .align(Alignment.TopStart)
+                .offset(x = indicatorOffsetX, y = (-9).dp)
+                .size(60.dp)
                 .zIndex(1f),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.TopCenter
         ) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val trianglePath = createRoundedTrianglePath(
+                    centerX = size.width / 2f,
+                    centerY = size.height / 2f,
+                    radius = 85f,
+                    bottomCornerRadius = 100f,
+                    sideCornerRadius = 1f
+                )
+
+                rotate(degrees = -60f) {
+                    drawPath(
+                        path = trianglePath,
+                        color = LightGreen2,
+                        style = Fill
+                    )
+                }
+            }
+
+            // Circle with icon
             Box(
                 modifier = Modifier
-                    .size(50.dp)
+                    .size(40.dp)
                     .background(colorResource(id = R.color.light_green2), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
@@ -130,37 +142,74 @@ fun BottomNavigationBar(
     }
 }
 
-// Keep your existing IndentPath class as is
-class IndentPath(
-    private val rect: Rect,
-) {
-    private val maxX = 110f
-    private val maxY = 34f
 
-    private fun translate(x: Float, y: Float): PointF {
-        return PointF(
-            ((x / maxX) * rect.width) + rect.left,
-            ((y / maxY) * rect.height) + rect.top
+fun createRoundedTrianglePath(
+    centerX: Float,
+    centerY: Float,
+    radius: Float,
+    bottomCornerRadius: Float,
+    sideCornerRadius: Float
+): Path {
+    val path = Path()
+
+    // Triangle has 3 points: every 120 degrees apart
+    val points = List(3) { i ->
+        val angle = Math.toRadians((i * 120 - 90).toDouble())
+        Offset(
+            x = centerX + cos(angle).toFloat() * radius,
+            y = centerY + sin(angle).toFloat() * radius
         )
     }
 
-    fun createPath(): Path {
-        val start = translate(x = 0f, y = 0f)
-        val middle = translate(x = 55f, y = 34f)
-        val end = translate(x = 110f, y = 0f)
+    val next = { i: Int -> points[(i + 1) % 3] }
+    val prev = { i: Int -> points[(i + 2) % 3] }
 
-        val control1 = translate(x = 23f, y = 0f)
-        val control2 = translate(x = 39f, y = 34f)
-        val control3 = translate(x = 71f, y = 34f)
-        val control4 = translate(x = 87f, y = 0f)
+    for (i in points.indices) {
+        val p0 = prev(i)
+        val p1 = points[i]
+        val p2 = next(i)
 
-        val path = Path()
-        path.moveTo(start.x, start.y)
-        path.cubicTo(control1.x, control1.y, control2.x, control2.y, middle.x, middle.y)
-        path.cubicTo(control3.x, control3.y, control4.x, control4.y, end.x, end.y)
+        // Directions
+        val dir0 = (p0 - p1).normalize()
+        val dir2 = (p2 - p1).normalize()
 
-        return path
+        // Use different corner radius for bottom point (index 2) vs side points
+        val cornerRadius = when(i) {
+            2 -> bottomCornerRadius // Bottom point gets larger radius
+            else -> sideCornerRadius // Side points get smaller radius
+        }
+
+        val offset0 = p1 + dir0 * cornerRadius
+        val offset2 = p1 + dir2 * cornerRadius
+
+        if (i == 0)
+            path.moveTo(offset0.x, offset0.y)
+        else
+            path.lineTo(offset0.x, offset0.y)
+
+        path.quadraticBezierTo(
+            p1.x, p1.y,
+            offset2.x, offset2.y
+        )
     }
+
+    path.close()
+    return path
 }
+
+private operator fun Offset.minus(other: Offset): Offset =
+    Offset(this.x - other.x, this.y - other.y)
+
+private operator fun Offset.plus(other: Offset): Offset =
+    Offset(this.x + other.x, this.y + other.y)
+
+private operator fun Offset.times(scalar: Float): Offset =
+    Offset(this.x * scalar, this.y * scalar)
+
+private fun Offset.normalize(): Offset {
+    val length = hypot(x.toDouble(), y.toDouble()).toFloat().coerceAtLeast(0.0001f)
+    return Offset(x / length, y / length)
+}
+
 
 
