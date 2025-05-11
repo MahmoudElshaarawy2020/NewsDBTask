@@ -1,13 +1,21 @@
 package com.example.newsdbtask.ui.presentation.components.chart
 
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -43,10 +51,18 @@ fun ArticleSourceBarChart(
 
     val barData = remember {
         BarData(barDataSet).apply {
-            barWidth = 0.7f
+            barWidth = 0.3f
         }
     }
-
+Column(
+    modifier = modifier
+        .fillMaxSize()
+        .padding(bottom = 32.dp)
+        .verticalScroll(rememberScrollState())
+        .navigationBarsPadding(),
+    verticalArrangement = Arrangement.Center,
+    horizontalAlignment = Alignment.CenterHorizontally
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -55,7 +71,7 @@ fun ArticleSourceBarChart(
         AndroidView(
             modifier = Modifier
                 .width((labels.size * 130).dp)
-                .height(300.dp),
+                .heightIn(min = 300.dp, max = 500.dp),
             factory = {
                 BarChart(context).apply {
                     this.data = barData
@@ -64,17 +80,17 @@ fun ArticleSourceBarChart(
                         valueFormatter = IndexAxisValueFormatter(labels)
                         position = XAxis.XAxisPosition.BOTTOM
                         granularity = 1f
-                        setDrawGridLines(false)
+                        setDrawGridLines(true)
                         setDrawAxisLine(true)
                         setDrawLabels(true)
                         labelRotationAngle = -45f
-                        textSize = 10f
+                        textSize = 9f
                         setLabelCount(labels.size)
                         setCenterAxisLabels(false)
-                        setAvoidFirstLastClipping(true)
+                        setAvoidFirstLastClipping(false)
 
                         yOffset = 10f
-                        xOffset = 0.5f
+                        xOffset = 2f
                     }
 
                     axisLeft.apply {
@@ -98,7 +114,7 @@ fun ArticleSourceBarChart(
                     extraLeftOffset = 15f
                     extraRightOffset = (labels.size * 2).toFloat()
 
-                    animateY(1000)
+                    animateY(1500)
                 }
             },
             update = {
@@ -107,4 +123,6 @@ fun ArticleSourceBarChart(
             }
         )
     }
+}
+
 }

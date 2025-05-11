@@ -32,7 +32,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.graphics.toArgb
 import com.example.newsdbtask.R
 import kotlin.math.cos
 import kotlin.math.hypot
@@ -101,18 +100,22 @@ fun BottomNavigationBar(
 
         Box(
             modifier = Modifier
-                .offset(x = indicatorOffsetX, y = (-9).dp)
+                .offset(x = indicatorOffsetX, y = (-12).dp)
                 .size(60.dp)
                 .zIndex(1f),
             contentAlignment = Alignment.TopCenter
         ) {
             Canvas(modifier = Modifier.fillMaxSize()) {
+                val radius = size.minDimension * 0.6f
+                val bottomCornerRadius = radius * 1.1f
+                val sideCornerRadius = radius * 0.02f
+
                 val trianglePath = createRoundedTrianglePath(
                     centerX = size.width / 2f,
                     centerY = size.height / 2f,
-                    radius = 85f,
-                    bottomCornerRadius = 100f,
-                    sideCornerRadius = 1f
+                    radius = radius,
+                    bottomCornerRadius = bottomCornerRadius,
+                    sideCornerRadius = sideCornerRadius
                 )
 
                 rotate(degrees = -60f) {
@@ -124,7 +127,7 @@ fun BottomNavigationBar(
                 }
             }
 
-            // Circle with icon
+
             Box(
                 modifier = Modifier
                     .size(40.dp)
@@ -152,7 +155,6 @@ fun createRoundedTrianglePath(
 ): Path {
     val path = Path()
 
-    // Triangle has 3 points: every 120 degrees apart
     val points = List(3) { i ->
         val angle = Math.toRadians((i * 120 - 90).toDouble())
         Offset(
@@ -173,10 +175,9 @@ fun createRoundedTrianglePath(
         val dir0 = (p0 - p1).normalize()
         val dir2 = (p2 - p1).normalize()
 
-        // Use different corner radius for bottom point (index 2) vs side points
         val cornerRadius = when(i) {
-            2 -> bottomCornerRadius // Bottom point gets larger radius
-            else -> sideCornerRadius // Side points get smaller radius
+            2 -> bottomCornerRadius
+            else -> sideCornerRadius
         }
 
         val offset0 = p1 + dir0 * cornerRadius
