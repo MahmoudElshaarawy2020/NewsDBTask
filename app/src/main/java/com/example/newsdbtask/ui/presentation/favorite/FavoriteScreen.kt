@@ -73,8 +73,6 @@ fun FavoriteScreen(
                         .padding(horizontal = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-
-
                     items(favorites) { article ->
                         val isFavorite = viewModel.favoritesMap[article.url] ?: false
 
