@@ -21,7 +21,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.newsdbtask.R
-import com.example.newsdbtask.ui.presentation.components.NewsCard
+import com.example.newsdbtask.ui.presentation.components.card.NewsCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

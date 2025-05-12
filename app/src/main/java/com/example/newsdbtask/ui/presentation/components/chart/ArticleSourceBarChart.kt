@@ -54,75 +54,75 @@ fun ArticleSourceBarChart(
             barWidth = 0.3f
         }
     }
-Column(
-    modifier = modifier
-        .fillMaxSize()
-        .padding(bottom = 32.dp)
-        .verticalScroll(rememberScrollState())
-        .navigationBarsPadding(),
-    verticalArrangement = Arrangement.Center,
-    horizontalAlignment = Alignment.CenterHorizontally
-) {
-    Row(
+    Column(
         modifier = modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState())
+            .fillMaxSize()
+            .padding(bottom = 32.dp)
+            .verticalScroll(rememberScrollState())
+            .navigationBarsPadding(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AndroidView(
-            modifier = Modifier
-                .width((labels.size * 130).dp)
-                .heightIn(min = 300.dp, max = 500.dp),
-            factory = {
-                BarChart(context).apply {
-                    this.data = barData
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+        ) {
+            AndroidView(
+                modifier = Modifier
+                    .width((labels.size * 130).dp)
+                    .heightIn(min = 300.dp, max = 500.dp),
+                factory = {
+                    BarChart(context).apply {
+                        this.data = barData
 
-                    xAxis.apply {
-                        valueFormatter = IndexAxisValueFormatter(labels)
-                        position = XAxis.XAxisPosition.BOTTOM
-                        granularity = 1f
-                        setDrawGridLines(true)
-                        setDrawAxisLine(true)
-                        setDrawLabels(true)
-                        labelRotationAngle = -45f
-                        textSize = 9f
-                        setLabelCount(labels.size)
-                        setCenterAxisLabels(false)
-                        setAvoidFirstLastClipping(false)
+                        xAxis.apply {
+                            valueFormatter = IndexAxisValueFormatter(labels)
+                            position = XAxis.XAxisPosition.BOTTOM
+                            granularity = 1f
+                            setDrawGridLines(true)
+                            setDrawAxisLine(true)
+                            setDrawLabels(true)
+                            labelRotationAngle = -45f
+                            textSize = 9f
+                            setLabelCount(labels.size)
+                            setCenterAxisLabels(false)
+                            setAvoidFirstLastClipping(false)
 
-                        yOffset = 10f
-                        xOffset = 2f
+                            yOffset = 10f
+                            xOffset = 2f
+                        }
+
+                        axisLeft.apply {
+                            axisMinimum = 0f
+                            setDrawLabels(true)
+                            setDrawAxisLine(true)
+                            setDrawGridLines(true)
+                            textSize = 12f
+                        }
+
+                        axisRight.isEnabled = false
+                        description.isEnabled = false
+                        legend.isEnabled = false
+                        setFitBars(true)
+
+                        setVisibleXRangeMaximum(labels.size.toFloat())
+                        moveViewToX(0f)
+                        setScaleEnabled(true)
+                        setPinchZoom(true)
+
+                        extraLeftOffset = 15f
+                        extraRightOffset = (labels.size * 2).toFloat()
+
+                        animateY(1500)
                     }
-
-                    axisLeft.apply {
-                        axisMinimum = 0f
-                        setDrawLabels(true)
-                        setDrawAxisLine(true)
-                        setDrawGridLines(true)
-                        textSize = 12f
-                    }
-
-                    axisRight.isEnabled = false
-                    description.isEnabled = false
-                    legend.isEnabled = false
-                    setFitBars(true)
-
-                    setVisibleXRangeMaximum(labels.size.toFloat())
-                    moveViewToX(0f)
-                    setScaleEnabled(true)
-                    setPinchZoom(true)
-
-                    extraLeftOffset = 15f
-                    extraRightOffset = (labels.size * 2).toFloat()
-
-                    animateY(1500)
+                },
+                update = {
+                    it.data = barData
+                    it.invalidate()
                 }
-            },
-            update = {
-                it.data = barData
-                it.invalidate()
-            }
-        )
+            )
+        }
     }
-}
 
 }

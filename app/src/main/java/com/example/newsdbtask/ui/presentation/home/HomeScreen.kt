@@ -29,7 +29,7 @@ import androidx.navigation.NavController
 import com.example.constants.Result
 import com.example.data.response.ArticlesItem
 import com.example.newsdbtask.R
-import com.example.newsdbtask.ui.presentation.components.NewsCard
+import com.example.newsdbtask.ui.presentation.components.card.NewsCard
 import com.example.newsdbtask.ui.presentation.favorite.FavoritesViewModel
 import com.example.newsdbtask.ui.presentation.components.shimmer_loader.PlaceholderNewsCard
 
